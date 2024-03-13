@@ -12,26 +12,26 @@ const Tab1: React.FC = () => {
   const speedLabels: { [key: number]: string } = {1: 'normal', 2: 'fast', 3: 'fastest'};
 
   function convertTypedArray(src: any, type: any) {
-    var buffer = new ArrayBuffer(src.byteLength);
-    var baseView = new src.constructor(buffer).set(src);
+    let buffer = new ArrayBuffer(src.byteLength);
+    let baseView = new src.constructor(buffer).set(src);
     return new type(buffer);
   }
 
   const handlePlayAudio = () => {
     factory().then(function(ggwave: any) {
-      var context = new AudioContext({sampleRate: 48000});
-      var parameters = ggwave.getDefaultParameters();
-      var instance = ggwave.init(parameters);
+      let context = new AudioContext({sampleRate: 48000});
+      let parameters = ggwave.getDefaultParameters();
+      let instance = ggwave.init(parameters);
 
-      var payload = text;
+      let payload = text;
 
-      var protocol = ggwave.ProtocolId[`GGWAVE_PROTOCOL_${transmissionType.toUpperCase()}_${speedLabels[transmissionSpeed].toUpperCase()}`];
+      let protocol = ggwave.ProtocolId[`GGWAVE_PROTOCOL_${transmissionType.toUpperCase()}_${speedLabels[transmissionSpeed].toUpperCase()}`];
 
-      var waveform = ggwave.encode(instance, payload, protocol, 10);
-      var buf = convertTypedArray(waveform, Float32Array);
-      var buffer = context.createBuffer(1, buf.length, context.sampleRate);
+      let waveform = ggwave.encode(instance, payload, protocol, 10);
+      let buf = convertTypedArray(waveform, Float32Array);
+      let buffer = context.createBuffer(1, buf.length, context.sampleRate);
       buffer.getChannelData(0).set(buf);
-      var source = context.createBufferSource();
+      let source = context.createBufferSource();
       source.buffer = buffer;
       source.connect(context.destination);
       source.start(0);
