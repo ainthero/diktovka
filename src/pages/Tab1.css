@@ -1,7 +1,6 @@
-.centered-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.custom {
+    max-width: 500px; /* or any appropriate max width */
+    margin-left: auto;
+    margin-right: auto;
     height: 100%;
   }
