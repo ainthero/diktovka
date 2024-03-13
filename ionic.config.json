@@ -1,0 +1,7 @@
+{
+  "name": "dicktovka",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
