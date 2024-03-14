@@ -8,8 +8,47 @@ const Tab1: React.FC = () => {
   const [text, setText] = useState('');
   const [transmissionType, setTransmissionType] = useState('ultrasound');
   const [transmissionSpeed, setTransmissionSpeed] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
 
   const speedLabels: { [key: number]: string } = {1: 'normal', 2: 'fast', 3: 'fastest'};
+
+  const visualize = (analyser: any) => {
+    const canvas = document.getElementById('audio-visualizer') as HTMLCanvasElement;
+    if (!canvas) return; // Safety check
+
+    const canvasCtx = canvas.getContext('2d');
+    if (!canvasCtx) return; // Check for context as well
+    const bufferLength = 2048;
+    const dataArray = new Uint8Array(bufferLength);
+  
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+    const barWidth = (WIDTH / bufferLength) * 2.5;
+  
+    const draw = () => {
+      requestAnimationFrame(draw);
+  
+      analyser.getByteFrequencyData(dataArray);
+  
+      canvasCtx.fillStyle = 'rgb(0,0,0)';
+      canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+  
+      let barHeight;
+      let x = 0;
+  
+      for(let i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+  
+        canvasCtx.fillStyle = 'rgb(50,50,' + (barHeight+100) + ')';
+        canvasCtx.fillRect(x, HEIGHT-barHeight/2, barWidth, barHeight/2);
+  
+        x += barWidth + 1;
+      }
+    };
+  
+    draw();
+  };
 
   function convertTypedArray(src: any, type: any) {
     var buffer = new ArrayBuffer(src.byteLength);
@@ -18,8 +57,11 @@ const Tab1: React.FC = () => {
   }
 
   const handlePlayAudio = () => {
+    if (isPlaying) return;
     factory().then(function(ggwave: any) {
       var context = new AudioContext({sampleRate: 48000});
+      var analyser = context.createAnalyser();
+      analyser.fftSize = 512; // Can be adjusted for different levels of detail
       var parameters = ggwave.getDefaultParameters();
       var instance = ggwave.init(parameters);
 
@@ -33,8 +75,17 @@ const Tab1: React.FC = () => {
       buffer.getChannelData(0).set(buf);
       var source = context.createBufferSource();
       source.buffer = buffer;
+      source.connect(analyser);
+      analyser.connect(context.destination);
       source.connect(context.destination);
+      source.onended = function() {
+        setIsPlaying(false); // Stop the animation
+      };
+      setIsPlaying(true); // Start the animation
+      visualize(analyser);
       source.start(0);
+      
+      
     });
   };
 
@@ -50,8 +101,10 @@ const Tab1: React.FC = () => {
         <IonItem>
             <IonInput value={text} placeholder="Enter text" onIonChange={e => setText(e.detail.value!)} />
           </IonItem>
-          <IonItem>
-          <IonButton onClick={handlePlayAudio}>Play Audio</IonButton>
+          <IonItem lines="none">
+          <div className="full-width-button-container">
+          <IonButton expand="full" onClick={handlePlayAudio}>Play Audio</IonButton>
+        </div>
           </IonItem>
           <IonRadioGroup value={transmissionType} onIonChange={e => setTransmissionType(e.detail.value)}>
           <IonItem>
@@ -79,6 +132,7 @@ const Tab1: React.FC = () => {
             <IonLabel slot="end">Fastest</IonLabel>
           </IonRange>
           </IonItem>
+          <canvas id="audio-visualizer" width="300" height="150"></canvas>
         </div>
       </IonContent>
     </IonPage>
