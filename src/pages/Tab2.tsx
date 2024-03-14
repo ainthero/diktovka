@@ -1,10 +1,24 @@
-import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonText} from '@ionic/react';
+import {
+    IonContent,
+    IonHeader,
+    IonPage,
+    IonTitle,
+    IonToolbar,
+    IonButton,
+    IonText,
+    IonFooter,
+    IonItem
+} from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab2.css';
 import React, {useEffect, useRef, useState} from "react";
 // @ts-ignore
 import factory from 'ggwave';
-import {Storage} from '@ionic/storage';
+import {Drivers, Storage} from '@ionic/storage';
+
+const storage = new Storage({
+    name: '__mydb'});
+storage.create()
 
 function convertTypedArray(src: any, type: any) {
     let buffer = new ArrayBuffer(src.byteLength);
@@ -17,7 +31,29 @@ const Tab2: React.FC = () => {
     // State for the text below the button
     const [recognizedTexts, setRecognizedTexts] = useState<string[]>([]); //
     const [buttonText, setButtonText] = useState("Recognize!")// Store multiple recognitions
+    const [isRecording, setIsRecording] = useState(false)
+    const [db, setDb] = useState<Storage>()
+    const [audioContext, setAudioContext] = useState<AudioContext>()
+
     const cloudContainerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        // Load recognized texts from storage on component mount
+        const loadStoredTexts = async () => {
+            const storedTexts = await storage.get('recognizedTexts');
+            if (storedTexts) {
+                setRecognizedTexts(storedTexts);
+            }
+        };
+
+        loadStoredTexts();
+    }, []);
+
+    useEffect(() => {
+        if (recognizedTexts.length > 0) {
+            // Save recognized texts to storage whenever the array updates
+            storage.set('recognizedTexts', recognizedTexts);
+        }
+    }, [recognizedTexts]);
 
     useEffect(() => {
         if (cloudContainerRef.current) {
@@ -27,12 +63,23 @@ const Tab2: React.FC = () => {
     }, [recognizedTexts]);
 
     async function startRecording() {
-        setButtonText("Prepare...")
+        if (isRecording) {
+            await audioContext?.close();
+            setIsRecording(false)
+            setButtonText("Recognize!");
+            return;
+        }
 
+        setIsRecording(true)
+
+        setButtonText("Prepare.");
+
+        // await audioContext?.close();
         let context = new AudioContext({sampleRate: 48000});
+        setAudioContext(context);
         let ggwave = await factory();
 
-        setButtonText("Prepare3...")
+        setButtonText("Prepare..")
 
         let parameters = ggwave.getDefaultParameters();
         parameters.sampleRateInp = context.sampleRate;
@@ -47,9 +94,9 @@ const Tab2: React.FC = () => {
             }
         };
 
-        setButtonText("Prepare4...")
+        setButtonText("Prepare...")
         let mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        setButtonText("Prepare5...")
+        setButtonText("Prepare....")
 
         let mediaStreamNode = context.createMediaStreamSource(mediaStream)
 
@@ -62,8 +109,7 @@ const Tab2: React.FC = () => {
             numberOfInputChannels,
             numberOfOutputChannels);
 
-        recorder.onaudioprocess = function (e) {
-            console.log("asdfasdf")
+        recorder!.onaudioprocess = function (e) {
             let source = e.inputBuffer;
             let res = ggwave.decode(instance, convertTypedArray(new Float32Array(source.getChannelData(0)), Int8Array));
 
@@ -73,8 +119,8 @@ const Tab2: React.FC = () => {
             }
         }
 
-        mediaStreamNode.connect(recorder);
-        recorder.connect(context.destination);
+        mediaStreamNode.connect(recorder!);
+        recorder!.connect(context.destination);
 
         setButtonText("Recognizing...")
     }
@@ -83,27 +129,26 @@ const Tab2: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Tab 2</IonTitle>
+                    <IonTitle>Text recognizing</IonTitle>
                 </IonToolbar>
             </IonHeader>
 
             <IonContent fullscreen className="ion-text-center ion-padding">
                 <div className="custom">
-                    <IonHeader collapse="condense">
-                        <IonToolbar>
-                            <IonTitle size="large">Text recognizing</IonTitle>
-                        </IonToolbar>
-                    </IonHeader>
                     <div className="cloud-container" ref={cloudContainerRef}>
                         {recognizedTexts.map((text, index) => (
                             <div key={index} className="text-cloud">{text}</div>
                         ))}
                     </div>
-                    <div className="full-width-button-container">
-                        <IonButton className="recognize-button" onClick={startRecording}>{buttonText}</IonButton>
-                    </div>
                 </div>
             </IonContent>
+            <IonFooter >
+                <IonItem>
+                    <div className="full-width-button-container">
+                        <IonButton className="recognize-button"  expand="full" size="large" onClick={startRecording}>{buttonText}</IonButton>
+                    </div>
+                </IonItem>
+            </IonFooter>
         </IonPage>
     );
 };

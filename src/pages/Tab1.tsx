@@ -7,12 +7,10 @@ import {
     IonInput,
     IonButton,
     IonRadioGroup,
-    IonListHeader,
     IonLabel,
     IonItem,
     IonRadio,
     IonRange,
-    IonCheckbox,
     IonGrid,
     IonRow,
     IonCol,
@@ -42,45 +40,45 @@ const Tab1: React.FC = () => {
         const canvas = document.getElementById('audio-visualizer') as HTMLCanvasElement;
         if (!canvas) return; // Safety check
 
-    const canvasCtx = canvas.getContext('2d');
-    if (!canvasCtx) return; // Check for context as well
-    const bufferLength = 200;
-    const dataArray = new Uint8Array(bufferLength);
-  
-    const WIDTH = canvas.width;
-    const HEIGHT = canvas.height;
-    const desiredNumberOfBars = 20;
-  
-    const draw = () => {
-      requestAnimationFrame(draw);
-    
-      analyser.getByteFrequencyData(dataArray);
-    
-      canvasCtx.fillStyle = '#1e1e1e';
-      canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-    
-      const segmentSize = Math.floor(bufferLength / desiredNumberOfBars);
-      let x = 0;
-      const barSpacing = 1; // spacing between bars
-      const barWidth = (WIDTH / desiredNumberOfBars) - barSpacing; // adjust bar width
-    
-      for (let i = 0; i < desiredNumberOfBars; i++) {
-        let sum = 0;
-        for (let j = 0; j < segmentSize; j++) {
-          sum += dataArray[i * segmentSize + j];
-        }
-        let avg = sum / segmentSize;
-        let barHeight = avg * 2;
-    
-        canvasCtx.fillStyle = 'rgb(66, 140,' + (barHeight + 150) + ')';
-        canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
-    
-        x += barWidth + barSpacing;
-      }
+        const canvasCtx = canvas.getContext('2d');
+        if (!canvasCtx) return; // Check for context as well
+        const bufferLength = 200;
+        const dataArray = new Uint8Array(bufferLength);
+
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
+        const desiredNumberOfBars = 20;
+
+        const draw = () => {
+            requestAnimationFrame(draw);
+
+            analyser.getByteFrequencyData(dataArray);
+
+            canvasCtx.fillStyle = '#1e1e1e';
+            canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            const segmentSize = Math.floor(bufferLength / desiredNumberOfBars);
+            let x = 0;
+            const barSpacing = 1; // spacing between bars
+            const barWidth = (WIDTH / desiredNumberOfBars) - barSpacing; // adjust bar width
+
+            for (let i = 0; i < desiredNumberOfBars; i++) {
+                let sum = 0;
+                for (let j = 0; j < segmentSize; j++) {
+                    sum += dataArray[i * segmentSize + j];
+                }
+                let avg = sum / segmentSize;
+                let barHeight = avg * 2;
+
+                canvasCtx.fillStyle = 'rgb(66, 140,' + (barHeight + 150) + ')';
+                canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+
+                x += barWidth + barSpacing;
+            }
+        };
+
+        draw();
     };
-  
-    draw();
-  };
 
     function convertTypedArray(src: any, type: any) {
         let buffer = new ArrayBuffer(src.byteLength);
@@ -139,26 +137,26 @@ const Tab1: React.FC = () => {
                         <IonTextarea class="large-text-field" rows={10} value={text} placeholder="Enter text" onIonInput={e => setText(e.detail.value!)}/>
                     </IonItem>
                     <IonItem>
-  <IonGrid>
-    <IonRow class="compact-row">
-      <IonCol size="10">
-        <IonInput 
-          value={password} 
-          onIonChange={e => setPassword(e.detail.value!)} 
-          type="password" 
-          placeholder="Enter Password" 
-          disabled={!usePassword}
-        />
-      </IonCol>
-      <IonCol size="1">
-        <IonToggle 
-          checked={usePassword} 
-          onIonChange={e => setUsePassword(e.detail.checked)} 
-        />
-      </IonCol>
-    </IonRow>
-  </IonGrid>
-</IonItem>
+                        <IonGrid>
+                            <IonRow class="compact-row">
+                                <IonCol size="10">
+                                    <IonInput
+                                        value={password}
+                                        onIonChange={e => setPassword(e.detail.value!)}
+                                        type="password"
+                                        placeholder="Enter Password"
+                                        disabled={!usePassword}
+                                    />
+                                </IonCol>
+                                <IonCol size="1">
+                                    <IonToggle
+                                        checked={usePassword}
+                                        onIonChange={e => setUsePassword(e.detail.checked)}
+                                    />
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
+                    </IonItem>
                     <IonRadioGroup value={transmissionType} onIonChange={e => setTransmissionType(e.detail.value)}>
                         <IonItem>
                             <IonLabel>Ultrasound</IonLabel>
@@ -177,15 +175,17 @@ const Tab1: React.FC = () => {
                         </IonRange>
                     </IonItem>
                     <IonItem>
-                    <canvas id="audio-visualizer" width="300" height="150"></canvas></IonItem>
+                        <canvas id="audio-visualizer" width="300" height="150"></canvas>
+                    </IonItem>
                 </div>
             </IonContent>
             <IonFooter>
-            <IonItem>
-            <div className="full-width-button-container">
-                            <IonButton expand="full" size="large" onClick={handlePlayAudio}>Play Audio</IonButton>
-                        </div></IonItem>
-</IonFooter>
+                <IonItem>
+                    <div className="full-width-button-container">
+                        <IonButton expand="full" size="large" onClick={handlePlayAudio}>Play Audio</IonButton>
+                    </div>
+                </IonItem>
+            </IonFooter>
         </IonPage>
     );
 };
