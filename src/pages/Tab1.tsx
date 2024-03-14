@@ -174,7 +174,8 @@ const Tab1: React.FC = () => {
                 </div>
             </IonContent>
             <IonFooter>
-    <IonButton expand="full" onClick={handlePlayAudio}>Play Audio</IonButton>
+            <IonItem>
+    <IonButton expand="full" onClick={handlePlayAudio}>Play Audio</IonButton></IonItem>
 </IonFooter>
         </IonPage>
     );
