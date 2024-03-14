@@ -31,7 +31,7 @@ const Tab1: React.FC = () => {
   
       analyser.getByteFrequencyData(dataArray);
   
-      canvasCtx.fillStyle = 'rgb(0,0,0)';
+      canvasCtx.fillStyle = '#1e1e1e';
       canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
   
       let barHeight;
@@ -41,7 +41,7 @@ const Tab1: React.FC = () => {
         barHeight = dataArray[i];
   
         canvasCtx.fillStyle = 'rgb(50,50,' + (barHeight+100) + ')';
-        canvasCtx.fillRect(x, HEIGHT-barHeight/2, barWidth, barHeight/2);
+        canvasCtx.fillRect(x, HEIGHT-barHeight/2, barWidth, barHeight);
   
         x += barWidth + 1;
       }
