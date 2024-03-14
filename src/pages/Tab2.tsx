@@ -5,9 +5,8 @@ import {
     IonTitle,
     IonToolbar,
     IonButton,
-    IonText,
     IonFooter,
-    IonItem
+    IonItem, IonMenu, IonButtons, IonMenuButton, IonList, IonLabel, IonCard, IonBadge, IonFabButton, IonSegmentButton
 } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab2.css';
@@ -17,7 +16,8 @@ import factory from 'ggwave';
 import {Drivers, Storage} from '@ionic/storage';
 
 const storage = new Storage({
-    name: '__mydb'});
+    name: '__mydb'
+});
 storage.create()
 
 function convertTypedArray(src: any, type: any) {
@@ -32,7 +32,6 @@ const Tab2: React.FC = () => {
     const [recognizedTexts, setRecognizedTexts] = useState<string[]>([]); //
     const [buttonText, setButtonText] = useState("Recognize!")// Store multiple recognitions
     const [isRecording, setIsRecording] = useState(false)
-    const [db, setDb] = useState<Storage>()
     const [audioContext, setAudioContext] = useState<AudioContext>()
 
     const cloudContainerRef = useRef<HTMLDivElement>(null);
@@ -126,30 +125,51 @@ const Tab2: React.FC = () => {
     }
 
     return (
-        <IonPage>
-            <IonHeader>
-                <IonToolbar>
-                    <IonTitle>Text recognizing</IonTitle>
-                </IonToolbar>
-            </IonHeader>
+        <>
+            <IonMenu contentId="main-content">
+                <IonHeader>
+                    <IonToolbar>
+                        <IonTitle>Menu</IonTitle>
+                    </IonToolbar>
+                </IonHeader>
+                <IonContent className="ion-padding">
+                    <IonList>
+                        <IonSegmentButton onClick={async () => {
+                            setRecognizedTexts(new Array<string>());
+                            storage.set('recognizedTexts', new Array<string>());
+                        }}>
+                            <IonLabel>Pokémon Yellow</IonLabel>
+                        </IonSegmentButton>
+                    </IonList>
+                </IonContent>
+            </IonMenu>
+            <IonPage id="main-content">
+                <IonHeader>
+                    <IonToolbar>
+                        <IonTitle>Text recognizing</IonTitle>
+                        <IonButtons slot="end">
+                            <IonMenuButton></IonMenuButton>
+                        </IonButtons>
+                    </IonToolbar>
+                </IonHeader>
 
-            <IonContent fullscreen className="ion-text-center ion-padding">
-                <div className="custom">
+                <IonContent fullscreen className="ion-text-center ion-padding">
                     <div className="cloud-container" ref={cloudContainerRef}>
                         {recognizedTexts.map((text, index) => (
                             <div key={index} className="text-cloud">{text}</div>
                         ))}
                     </div>
-                </div>
-            </IonContent>
-            <IonFooter >
-                <IonItem>
-                    <div className="full-width-button-container">
-                        <IonButton className="recognize-button"  expand="full" size="large" onClick={startRecording}>{buttonText}</IonButton>
-                    </div>
-                </IonItem>
-            </IonFooter>
-        </IonPage>
+                </IonContent>
+                <IonFooter>
+                    <IonItem>
+                        <div className="full-width-button-container">
+                            <IonButton className="recognize-button" expand="full" size="large"
+                                       onClick={startRecording}>{buttonText}</IonButton>
+                        </div>
+                    </IonItem>
+                </IonFooter>
+            </IonPage>
+        </>
     );
 };
 
