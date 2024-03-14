@@ -24,6 +24,8 @@ import React, {useState} from 'react';
 import './Tab1.css';
 // @ts-ignore
 import factory from 'ggwave';
+// @ts-ignore
+import CryptoJS from 'crypto-js';
 
 const Tab1: React.FC = () => {
     const [text, setText] = useState('');
@@ -95,7 +97,12 @@ const Tab1: React.FC = () => {
             var parameters = ggwave.getDefaultParameters();
             var instance = ggwave.init(parameters);
 
-            let payload = usePassword ? `${text}:${password}` : text;
+            let payload = '';
+            if (usePassword) {
+              payload = '1' + CryptoJS.AES.encrypt(password + text, password).toString()
+            } else {
+              payload = '0' + text;
+            }
 
             let protocol = ggwave.ProtocolId[`GGWAVE_PROTOCOL_${transmissionType.toUpperCase()}_${speedLabels[transmissionSpeed].toUpperCase()}`];
 
@@ -129,7 +136,7 @@ const Tab1: React.FC = () => {
             <IonContent fullscreen className="ion-text-center ion-padding">
                 <div className='custom'>
                     <IonItem>
-                        <IonTextarea class="large-text-field" value={text} placeholder="Enter text" onIonInput={e => setText(e.detail.value!)}/>
+                        <IonTextarea class="large-text-field" rows={10} value={text} placeholder="Enter text" onIonInput={e => setText(e.detail.value!)}/>
                     </IonItem>
                     <IonItem>
   <IonGrid>

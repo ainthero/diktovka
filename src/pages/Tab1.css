@@ -27,6 +27,10 @@
 }
 
 .large-text-field {
-  font-size: 1.2em; /* Larger font */
-  height: 100px;     /* Increased height */
+  font-size: 1.0em; /* Larger font */
+}
+
+.equal-padding {
+  padding-left: 15px; /* Adjust as needed */
+  padding-right: 15px; /* Adjust as needed */
 }
