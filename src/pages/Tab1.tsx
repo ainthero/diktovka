@@ -11,7 +11,11 @@ import {
     IonLabel,
     IonItem,
     IonRadio,
-    IonRange
+    IonRange,
+    IonCheckbox,
+    IonGrid,
+    IonRow,
+    IonCol
 } from '@ionic/react';
 import React, {useState} from 'react';
 import './Tab1.css';
@@ -23,6 +27,8 @@ const Tab1: React.FC = () => {
     const [transmissionType, setTransmissionType] = useState('ultrasound');
     const [transmissionSpeed, setTransmissionSpeed] = useState(1);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [password, setPassword] = useState('');
+    const [usePassword, setUsePassword] = useState(false);
 
 
     const speedLabels: { [key: number]: string } = {1: 'normal', 2: 'fast', 3: 'fastest'};
@@ -86,7 +92,7 @@ const Tab1: React.FC = () => {
             var parameters = ggwave.getDefaultParameters();
             var instance = ggwave.init(parameters);
 
-            let payload = text;
+            let payload = usePassword ? `${text}:${password}` : text;
 
             let protocol = ggwave.ProtocolId[`GGWAVE_PROTOCOL_${transmissionType.toUpperCase()}_${speedLabels[transmissionSpeed].toUpperCase()}`];
 
@@ -120,19 +126,30 @@ const Tab1: React.FC = () => {
             <IonContent fullscreen className="ion-text-center ion-padding">
                 <div className='custom'>
                     <IonItem>
-                        <IonInput value={text} placeholder="Enter text" onIonChange={e => setText(e.detail.value!)}/>
+                        <IonInput class="large-text-field" value={text} placeholder="Enter text" onIonChange={e => setText(e.detail.value!)}/>
                     </IonItem>
-                    <IonItem lines="none">
-                        <div className="full-width-button-container">
-                            <IonButton expand="full" onClick={handlePlayAudio}>Play Audio</IonButton>
-                        </div>
-                    </IonItem>
+                    <IonItem>
+  <IonGrid>
+    <IonRow class="compact-row">
+      <IonCol size="10">
+        <IonInput 
+          value={password} 
+          onIonChange={e => setPassword(e.detail.value!)} 
+          type="password" 
+          placeholder="Enter Password" 
+          disabled={!usePassword}
+        />
+      </IonCol>
+      <IonCol size="2">
+        <IonCheckbox 
+          checked={usePassword} 
+          onIonChange={e => setUsePassword(e.detail.checked)} 
+        />
+      </IonCol>
+    </IonRow>
+  </IonGrid>
+</IonItem>
                     <IonRadioGroup value={transmissionType} onIonChange={e => setTransmissionType(e.detail.value)}>
-                        <IonItem>
-                            <IonListHeader>
-                                <IonLabel>Transmission Type</IonLabel>
-                            </IonListHeader>
-                        </IonItem>
                         <IonItem>
                             <IonLabel>Ultrasound</IonLabel>
                             <IonRadio slot="start" value="ultrasound"/>
@@ -143,18 +160,19 @@ const Tab1: React.FC = () => {
                         </IonItem>
                     </IonRadioGroup>
                     <IonItem>
-                        <IonListHeader>
-                            <IonLabel>Transmission Speed</IonLabel>
-                        </IonListHeader>
-                    </IonItem>
-                    <IonItem>
                         <IonRange min={1} max={3} snaps={true} ticks={true} value={transmissionSpeed}
                                   onIonChange={e => setTransmissionSpeed(e.detail.value as number)}>
                             <IonLabel slot="start">Normal</IonLabel>
                             <IonLabel slot="end">Fastest</IonLabel>
                         </IonRange>
                     </IonItem>
-                    <canvas id="audio-visualizer" width="300" height="150"></canvas>
+                    <IonItem>
+                    <canvas id="audio-visualizer" width="300" height="150"></canvas></IonItem>
+                    <IonItem lines="none">
+                        <div className="full-width-button-container">
+                            <IonButton expand="full" size="large" onClick={handlePlayAudio}>Play Audio</IonButton>
+                        </div>
+                    </IonItem>
                 </div>
             </IonContent>
         </IonPage>

@@ -16,3 +16,12 @@
   height: 150px; /* Adjust as needed */
   background-color: var(--ion-item-background, #1e1e1e);
 }
+
+.compact-row {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --ion-padding-top: 0;
+  --ion-padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
