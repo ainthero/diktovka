@@ -33,31 +33,38 @@ const Tab1: React.FC = () => {
 
     const canvasCtx = canvas.getContext('2d');
     if (!canvasCtx) return; // Check for context as well
-    const bufferLength = 2048;
+    const bufferLength = 200;
     const dataArray = new Uint8Array(bufferLength);
   
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
-    const barWidth = (WIDTH / bufferLength) * 2.5;
+    const desiredNumberOfBars = 20;
   
     const draw = () => {
       requestAnimationFrame(draw);
-  
+    
       analyser.getByteFrequencyData(dataArray);
-  
+    
       canvasCtx.fillStyle = '#1e1e1e';
       canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-  
-      let barHeight;
+    
+      const segmentSize = Math.floor(bufferLength / desiredNumberOfBars);
       let x = 0;
-  
-      for(let i = 0; i < bufferLength; i++) {
-        barHeight = dataArray[i];
-  
-        canvasCtx.fillStyle = 'rgb(50,50,' + (barHeight+100) + ')';
-        canvasCtx.fillRect(x, HEIGHT-barHeight/2, barWidth, barHeight);
-  
-        x += barWidth + 1;
+      const barSpacing = 1; // spacing between bars
+      const barWidth = (WIDTH / desiredNumberOfBars) - barSpacing; // adjust bar width
+    
+      for (let i = 0; i < desiredNumberOfBars; i++) {
+        let sum = 0;
+        for (let j = 0; j < segmentSize; j++) {
+          sum += dataArray[i * segmentSize + j];
+        }
+        let avg = sum / segmentSize;
+        let barHeight = avg * 2;
+    
+        canvasCtx.fillStyle = 'rgb(66, 140,' + (barHeight + 150) + ')';
+        canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+    
+        x += barWidth + barSpacing;
       }
     };
   
