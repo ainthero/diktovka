@@ -15,7 +15,10 @@ import {
     IonCheckbox,
     IonGrid,
     IonRow,
-    IonCol
+    IonCol,
+    IonTextarea,
+    IonToggle,
+    IonFooter
 } from '@ionic/react';
 import React, {useState} from 'react';
 import './Tab1.css';
@@ -126,7 +129,7 @@ const Tab1: React.FC = () => {
             <IonContent fullscreen className="ion-text-center ion-padding">
                 <div className='custom'>
                     <IonItem>
-                        <IonInput class="large-text-field" value={text} placeholder="Enter text" onIonChange={e => setText(e.detail.value!)}/>
+                        <IonTextarea class="large-text-field" value={text} placeholder="Enter text" onIonChange={e => setText(e.detail.value!)}/>
                     </IonItem>
                     <IonItem>
   <IonGrid>
@@ -140,8 +143,8 @@ const Tab1: React.FC = () => {
           disabled={!usePassword}
         />
       </IonCol>
-      <IonCol size="2">
-        <IonCheckbox 
+      <IonCol size="1">
+        <IonToggle 
           checked={usePassword} 
           onIonChange={e => setUsePassword(e.detail.checked)} 
         />
@@ -168,13 +171,11 @@ const Tab1: React.FC = () => {
                     </IonItem>
                     <IonItem>
                     <canvas id="audio-visualizer" width="300" height="150"></canvas></IonItem>
-                    <IonItem lines="none">
-                        <div className="full-width-button-container">
-                            <IonButton expand="full" size="large" onClick={handlePlayAudio}>Play Audio</IonButton>
-                        </div>
-                    </IonItem>
                 </div>
             </IonContent>
+            <IonFooter>
+    <IonButton expand="full" onClick={handlePlayAudio}>Play Audio</IonButton>
+</IonFooter>
         </IonPage>
     );
 };

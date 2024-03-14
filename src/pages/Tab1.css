@@ -25,3 +25,8 @@
   margin-top: 0;
   margin-bottom: 0;
 }
+
+.large-text-field {
+  font-size: 1.2em; /* Larger font */
+  height: 100px;     /* Increased height */
+}
