@@ -27,7 +27,7 @@ import factory from 'ggwave';
 
 const Tab1: React.FC = () => {
     const [text, setText] = useState('');
-    const [transmissionType, setTransmissionType] = useState('ultrasound');
+    const [transmissionType, setTransmissionType] = useState('audible');
     const [transmissionSpeed, setTransmissionSpeed] = useState(1);
     const [isPlaying, setIsPlaying] = useState(false);
     const [password, setPassword] = useState('');
@@ -129,7 +129,7 @@ const Tab1: React.FC = () => {
             <IonContent fullscreen className="ion-text-center ion-padding">
                 <div className='custom'>
                     <IonItem>
-                        <IonTextarea class="large-text-field" value={text} placeholder="Enter text" onIonChange={e => setText(e.detail.value!)}/>
+                        <IonTextarea class="large-text-field" value={text} placeholder="Enter text" onIonInput={e => setText(e.detail.value!)}/>
                     </IonItem>
                     <IonItem>
   <IonGrid>
