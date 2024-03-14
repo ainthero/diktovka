@@ -51,8 +51,8 @@ const Tab1: React.FC = () => {
   };
 
   function convertTypedArray(src: any, type: any) {
-    var buffer = new ArrayBuffer(src.byteLength);
-    var baseView = new src.constructor(buffer).set(src);
+    let buffer = new ArrayBuffer(src.byteLength);
+    let baseView = new src.constructor(buffer).set(src);
     return new type(buffer);
   }
 
@@ -65,15 +65,15 @@ const Tab1: React.FC = () => {
       var parameters = ggwave.getDefaultParameters();
       var instance = ggwave.init(parameters);
 
-      var payload = text;
+      let payload = text;
 
-      var protocol = ggwave.ProtocolId[`GGWAVE_PROTOCOL_${transmissionType.toUpperCase()}_${speedLabels[transmissionSpeed].toUpperCase()}`];
+      let protocol = ggwave.ProtocolId[`GGWAVE_PROTOCOL_${transmissionType.toUpperCase()}_${speedLabels[transmissionSpeed].toUpperCase()}`];
 
-      var waveform = ggwave.encode(instance, payload, protocol, 10);
-      var buf = convertTypedArray(waveform, Float32Array);
-      var buffer = context.createBuffer(1, buf.length, context.sampleRate);
+      let waveform = ggwave.encode(instance, payload, protocol, 10);
+      let buf = convertTypedArray(waveform, Float32Array);
+      let buffer = context.createBuffer(1, buf.length, context.sampleRate);
       buffer.getChannelData(0).set(buf);
-      var source = context.createBufferSource();
+      let source = context.createBufferSource();
       source.buffer = buffer;
       source.connect(analyser);
       analyser.connect(context.destination);

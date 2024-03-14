@@ -5,6 +5,8 @@ const config: CapacitorConfig = {
   appName: 'dicktovka',
   webDir: 'dist',
   server: {
+    hostname: 'localhost',
+    iosScheme: 'https',
     androidScheme: 'https'
   }
 };
