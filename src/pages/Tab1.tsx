@@ -22,8 +22,7 @@ import React, {useState} from 'react';
 import './Tab1.css';
 // @ts-ignore
 import factory from 'ggwave';
-// @ts-ignore
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
 const Tab1: React.FC = () => {
     const [text, setText] = useState('');

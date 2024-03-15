@@ -6,7 +6,18 @@ import {
     IonToolbar,
     IonButton,
     IonFooter,
-    IonItem, IonMenu, IonButtons, IonMenuButton, IonList, IonLabel, IonCard, IonBadge, IonFabButton, IonSegmentButton
+    IonItem,
+    IonMenu,
+    IonButtons,
+    IonMenuButton,
+    IonList,
+    IonLabel,
+    IonCard,
+    IonBadge,
+    IonFabButton,
+    IonSegmentButton,
+    useIonModal,
+    useIonToast, IonInput
 } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab2.css';
@@ -14,6 +25,8 @@ import React, {useEffect, useRef, useState} from "react";
 // @ts-ignore
 import factory from 'ggwave';
 import {Drivers, Storage} from '@ionic/storage';
+import CryptoJS from "crypto-js";
+import {OverlayEventDetail} from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 
 const storage = new Storage({
     name: '__mydb'
@@ -26,8 +39,45 @@ function convertTypedArray(src: any, type: any) {
     return new type(buffer);
 }
 
+const ModalPassword = ({onDismiss}: {
+    onDismiss:
+        (data?: string | number | null | undefined, role?: string) => void;
+}) => {
+    const inputRef = useRef<HTMLIonInputElement>(null);
+    return (
+        <IonPage>
+            <IonHeader>
+                <IonToolbar>
+                    <IonButtons slot="start">
+                        <IonButton color="medium" onClick={() => onDismiss(null, 'cancel')}>
+                            Cancel
+                        </IonButton>
+                    </IonButtons>
+                    <IonTitle>Welcome</IonTitle>
+                    <IonButtons slot="end">
+                        <IonButton onClick={() => onDismiss(inputRef.current?.value, 'confirm')} strong={true}>
+                            Confirm
+                        </IonButton>
+                    </IonButtons>
+                </IonToolbar>
+            </IonHeader>
+            <IonContent className="ion-padding">
+                <IonItem>
+                    <IonInput ref={inputRef} labelPlacement="stacked" label="Password"/>
+                </IonItem>
+            </IonContent>
+        </IonPage>
+    );
+};
+
 
 const Tab2: React.FC = () => {
+
+    const [present, dismiss] = useIonModal(ModalPassword, {
+        onDismiss: (data: string, role: string) => dismiss(data, role),
+    });
+
+    const [toast] = useIonToast();
     // State for the text below the button
     const [recognizedTexts, setRecognizedTexts] = useState<string[]>([]); //
     const [buttonText, setButtonText] = useState("Recognize!")// Store multiple recognitions
@@ -124,6 +174,43 @@ const Tab2: React.FC = () => {
         setButtonText("Recognizing...")
     }
 
+    const decryptText = (cipherText: string, password: string) => {
+        const bytes = CryptoJS.AES.decrypt(cipherText, password);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    };
+
+    function openModal(text: string, index: number) {
+        present({
+            onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
+                if (ev.detail.role === 'confirm') {
+                    if (text && ev.detail.data) {
+
+                        let tst = () => toast({
+                            message: 'Incorrent password or corrupted message',
+                            duration: 1500,
+                            position: "bottom",
+                        });
+
+                        try {
+                            console.log(ev.detail.data)
+                            let decrypted = decryptText(text.slice(1), ev.detail.data)
+                            if (decrypted.startsWith(ev.detail.data)) {
+                                console.log(decrypted)
+                                setRecognizedTexts(rt => rt.with(index, '0' + decrypted.slice(ev.detail.data.length)))
+                            } else {
+                                tst()
+                            }
+                        } catch (e) {
+                            console.log(e)
+                            tst()
+                        }
+                    } else {
+                    }
+                }
+            },
+        });
+    }
+
     return (
         <>
             <IonMenu contentId="main-content">
@@ -155,9 +242,12 @@ const Tab2: React.FC = () => {
 
                 <IonContent fullscreen className="ion-text-center ion-padding">
                     <div className="cloud-container" ref={cloudContainerRef}>
-                        {recognizedTexts.map((text, index) => (
-                            <div key={index} className="text-cloud">{text}</div>
-                        ))}
+                        {recognizedTexts.map((text, index) => {
+                            return text.startsWith('1') ?
+                                <div key={index} color="blue" className="text-cloud" onClick={() => openModal(text, index)}>***tap to
+                                    decrypt***</div> :
+                                <div key={index} className="text-cloud">{text.slice(1)}</div>;
+                        })}
                     </div>
                 </IonContent>
                 <IonFooter>
