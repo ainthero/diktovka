@@ -225,7 +225,7 @@ const Tab2: React.FC = () => {
                             setRecognizedTexts(new Array<string>());
                             storage.set('recognizedTexts', new Array<string>());
                         }}>
-                            <IonLabel>Pokémon Yellow</IonLabel>
+                            <IonLabel>Clear history</IonLabel>
                         </IonSegmentButton>
                     </IonList>
                 </IonContent>
