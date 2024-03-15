@@ -37,6 +37,26 @@
     animation: slideIn 0.5s forwards;
 }
 
+.text-cloud {
+    user-select: auto !important;
+    background: #d8d8d8;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 5px 0;
+    max-width: 90%;
+    word-wrap: break-word;
+    align-self: flex-start;
+    opacity: 0;
+    transform: translateX(20px);
+    animation: slideIn 0.5s forwards;
+}
+
+@media (prefers-color-scheme: dark) {
+    .text-cloud {
+        background: #1e1e1e;
+    }
+}
+
 @keyframes slideIn {
     to {
         opacity: 1;

@@ -244,8 +244,7 @@ const Tab2: React.FC = () => {
                     <div className="cloud-container" ref={cloudContainerRef}>
                         {recognizedTexts.map((text, index) => {
                             return text.startsWith('1') ?
-                                <div key={index} color="blue" className="text-cloud" onClick={() => openModal(text, index)}>***tap to
-                                    decrypt***</div> :
+                                <div key={index} className="text-cloud" onClick={() => openModal(text, index)}><b><i><u>TAP TO DECRYPT</u></i></b></div> :
                                 <div key={index} className="text-cloud">{text.slice(1)}</div>;
                         })}
                     </div>
