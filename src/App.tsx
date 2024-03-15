@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import {NavLink, Redirect, Route} from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { ellipse, square, triangle, mic, volumeHigh } from 'ionicons/icons';
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 
@@ -52,11 +52,11 @@ const App: React.FC = () => (
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
+            <IonIcon aria-hidden="true" icon={volumeHigh} />
             <IonLabel>Text2Audio</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
+            <IonIcon aria-hidden="true" icon={mic} />
             <IonLabel>Audio2Text</IonLabel>
           </IonTabButton>
         </IonTabBar>
