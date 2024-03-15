@@ -53,8 +53,13 @@ const Tab1: React.FC = () => {
 
             analyser.getByteFrequencyData(dataArray);
 
-            canvasCtx.fillStyle = '#1e1e1e';
-            canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+                var clr = getComputedStyle(document.getElementById('idd')!).getPropertyValue('--ion-item-background');
+                if (clr === "") {
+                    clr = '#ffffff';
+                }
+                console.log(clr)
+                canvasCtx.fillStyle = clr;
+                canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
             const segmentSize = Math.floor(bufferLength / desiredNumberOfBars);
             let x = 0;
@@ -87,6 +92,7 @@ const Tab1: React.FC = () => {
 
     const handlePlayAudio = () => {
         if (isPlaying) return;
+        if (text === "") return;
         factory().then(function (ggwave: any) {
             var context = new AudioContext({sampleRate: 48000});
             var analyser = context.createAnalyser();
@@ -173,7 +179,7 @@ const Tab1: React.FC = () => {
                             <IonLabel slot="end">Fastest</IonLabel>
                         </IonRange>
                     </IonItem>
-                    <IonItem>
+                    <IonItem id="idd">
                         <canvas id="audio-visualizer" width="300" height="150"></canvas>
                     </IonItem>
                 </div>
