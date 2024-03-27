@@ -27,6 +27,7 @@ import factory from 'ggwave';
 import {Drivers, Storage} from '@ionic/storage';
 import CryptoJS from "crypto-js";
 import {OverlayEventDetail} from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+import * as mic from '@mozartec/capacitor-microphone'
 
 const storage = new Storage({
     name: '__mydb'
@@ -122,6 +123,8 @@ const Tab2: React.FC = () => {
         setIsRecording(true)
 
         setButtonText("Prepare.");
+
+        await mic.Microphone.requestPermissions()
 
         // await audioContext?.close();
         let context = new AudioContext({sampleRate: 48000});
